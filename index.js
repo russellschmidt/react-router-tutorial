@@ -5,11 +5,11 @@ import App from './modules/App'
 import Repos from './modules/Repos'
 import About from './modules/About'
 import Repo from './modules/Repo'
-import { Router, Route, hashHistory, IndexRoute } from 'react-router'
+import { Router, Route, browserHistory, IndexRoute } from 'react-router'
 import Home from './modules/Home'
 
 render((
-  <Router history={hashHistory}>
+  <Router history={browserHistory}>
   { /* add the routes here */ }
     <Route path="/" component={App}>
       <IndexRoute component={Home}/>
