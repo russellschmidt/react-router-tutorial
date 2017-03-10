@@ -17,12 +17,24 @@ app.use(compression())
 app.use(express.static(path.join(__dirname, 'public')))
 
 // send all requests to index.html so browserHistory in React Router works
-app.get('*', function (req, res) {
+app.get('*', (req, res) => {
   match({ routes: routes, location: req.url }, (err, redirect, props) => {
-    const appHtml = renderToString(<RouterContext {...props}/>)
+    // in here we can make some decisions all at once
+    if (err) {
+      // error during route matching
+      res.status(500).send(err.message)
+    } else if (redirect) {
+      // Routes can have 'onEnter' hooks & redirect before a route is entered
+      res.redirect(redirect.pathname + redirect.search)
+    } else if (props) {
+      // if we have props then we matched a route and can render
+      const appHtml = renderToString(<RouterContext {...props}/>)
+      res.send(renderPage(appHtml))
+    } else {
+      // no errors, no redirect, just did not match anything
+      res.status(404).send('Not Found')
+    }
   })
-
-  res.send(renderPage(appHtml))
 })
 
 function renderPage(appHtml) {
